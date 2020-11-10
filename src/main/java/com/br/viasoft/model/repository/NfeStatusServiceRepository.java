@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.br.viasoft.model.enumerations.AvaliableStatusEnum;
 import com.br.viasoft.model.enumerations.StateEnum;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,4 +22,15 @@ public interface NfeStatusServiceRepository extends JpaRepository<NfeStatusServi
 
     @Query(value = "Select n from NfeStatusService as n order by n.momentColected DESC ")
     List<NfeStatusService> findLastNfeStatus(Pageable page);
+
+    @Query(value = " Select n from NfeStatusService as n inner join n.state as s " +
+            " where 1=1 " +
+            " AND ( :state is null or s.state = : state)" +
+            " AND ( :startedFrom is null or n.momentColected BETWEEN :startedFrom AND :startedTo )" +
+            " order by n.momentColected DESC ")
+    List<NfeStatusService> findByFilter( @Param("state") StateEnum state,
+                                         @Param("startedFrom") LocalDateTime startedFrom,
+                                         @Param("startedTo") LocalDateTime startedTo);
+
+    List<NfeStatusService> findByStatus(AvaliableStatusEnum unavaliable);
 }

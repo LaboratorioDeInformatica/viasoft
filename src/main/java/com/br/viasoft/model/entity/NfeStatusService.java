@@ -11,15 +11,13 @@ import org.hibernate.annotations.Type;
 
 import com.br.viasoft.model.enumerations.StateEnum;
 
-@Data
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table
-@Getter
-@Setter
-@ToString
+@Data
 public class NfeStatusService {
 
 	@Id
