@@ -23,4 +23,5 @@ public class NfeStatusDto {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate filterDate ;
+
 }

@@ -27,8 +27,9 @@ public class NfeStatusService {
 	
 	@Column
 	private LocalDateTime momentColected;
-	
-	@Column
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "status")
 	private AvaliableStatusEnum status;
 	
 	@JoinColumn(name ="id_state")

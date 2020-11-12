@@ -3,9 +3,11 @@ package com.br.viasoft.nfe.service;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import com.br.viasoft.model.entity.NfeStatusService;
+import com.br.viasoft.model.entity.State;
 import com.br.viasoft.model.enumerations.AvaliableStatusEnum;
 import com.br.viasoft.model.enumerations.StateEnum;
 import org.jsoup.Jsoup;
@@ -19,7 +21,8 @@ import com.br.viasoft.model.repository.StateRepository;
 
 @Component
 public class NfeAvalibleStatusService {
-	
+
+	private final String STATUS ="bola_verde";
 	private final StateRepository stateRepository;
 	private final NfeStatusServiceRepository nfeStatusServiceRepository;
 
@@ -29,7 +32,7 @@ public class NfeAvalibleStatusService {
 		this.nfeStatusServiceRepository = nfeStatusServiceRepository;
 	}
 
-	public void statusAvaliabelService() throws IOException {
+	public void statusAvaliabelService() throws Exception {
 		
 		Document doc = Jsoup.connect("http://www.nfe.fazenda.gov.br/portal/disponibilidade.aspx")
 				.maxBodySize(0)
@@ -48,15 +51,23 @@ public class NfeAvalibleStatusService {
         			nfeStatusService.setMomentColected(LocalDateTime.now());
 
         			if(tds.get(0).text().length() <=2) {
-        				nfeStatusService.setState(stateRepository.findByState(StateEnum.valueOf(tds.get(0).text())));
+        				nfeStatusService.setState(getByState(tds));
 						nfeStatusService.setStatus(
-								cleanPngname(avaliableStatus).equals("bola_verde") ?
+								cleanPngname(avaliableStatus).equals(STATUS) ?
 										AvaliableStatusEnum.AVALIABLE : AvaliableStatusEnum.UNAVALIABLE);
 						nfeStatusServiceRepository.save(nfeStatusService);
 					}
         		  }
         	  }
         }
+	}
+
+	private State getByState(Elements estado) throws Exception {
+		try {
+			return stateRepository.findByState(StateEnum.valueOf(estado.get(0).text()));
+		}catch (Exception e){
+			throw  new Exception( estado + "não encontrado " + e.getMessage());
+		}
 	}
 
 	private String cleanPngname (String pngName){

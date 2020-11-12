@@ -8,7 +8,9 @@ import com.br.viasoft.model.enumerations.AvaliableStatusEnum;
 import com.br.viasoft.model.enumerations.StateEnum;
 import com.br.viasoft.model.repository.NfeStatusServiceRepository;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import java.time.LocalDateTime;
@@ -38,8 +40,8 @@ public class NfeStatusServiceService {
         return list ;
     }
 
-    public NfeStatusService findByState(NfeStatusDto dto) {
-        return this.filter(dto).stream().findFirst().orElse(null);
+    public NfeStatusService findByState(NfeStatusDto dto)  {
+        return this.filter(dto).stream().findFirst().orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     public List<NfeStatusService> getAllStatesStatusByDate(NfeStatusDto dto) {
@@ -54,12 +56,14 @@ public class NfeStatusServiceService {
         );
     }
 
-    public String getUnavaliableService() {
+    public NfeStatusDto getUnavaliableService() {
         List<NfeStatusService> list = nfeStatusServiceRepository.findByStatus(AvaliableStatusEnum.UNAVALIABLE);
         Map<State, Long> counted = list.stream()
                 .collect(Collectors.groupingBy(NfeStatusService::getState,Collectors.counting()
                         ));
-        return maxUnavaliabe(counted).getState().toString();
+        NfeStatusDto nfeStatusDto = new NfeStatusDto();
+        nfeStatusDto.setState(maxUnavaliabe(counted).getState().toString());
+        return nfeStatusDto;
     }
 
     private <K, V extends Comparable<V>> K maxUnavaliabe(Map<K, V> map) {

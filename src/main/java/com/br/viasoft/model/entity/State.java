@@ -26,8 +26,9 @@ public class State {
     @Column
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	
-	@Column
+
+	@Enumerated(EnumType.STRING)
+	@Column(name="state")
 	private StateEnum state;
 	
 }

@@ -16,8 +16,7 @@ public class ViasoftApplication {
 	
 	@Autowired
 	private NfeAvalibleStatusService service;
-	
-	private final long SEGUNDO = 10000;
+
 	private final long FIVE_MINUTS = 300000;
 
 	public static void main(String[] args) {
@@ -26,7 +25,7 @@ public class ViasoftApplication {
 	}
 
 	@Scheduled(fixedDelay = FIVE_MINUTS)
-	public void checkNfeAvalibleStatusService() throws IOException {
+	public void checkNfeAvalibleStatusService() throws Exception {
 		service.statusAvaliabelService();
 	}
 }

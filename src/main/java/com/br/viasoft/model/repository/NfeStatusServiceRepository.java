@@ -17,7 +17,7 @@ public interface NfeStatusServiceRepository extends JpaRepository<NfeStatusServi
 
     @Query(value=" select n from NfeStatusService as n  inner join n.state as s " +
             " where s.state in :states " +
-            " and n.momentColected >= :acutualDate  order by n.momentColected DESC ")
+            " and n.momentColected >= :acutualDate  order by n.momentColected  , s.state DESC")
     List<NfeStatusService> findAllStatesActualStatus (@Param("states") List<StateEnum> states,@Param("acutualDate") LocalDateTime acutualDate);
 
     @Query(value = "Select n from NfeStatusService as n order by n.momentColected DESC ")
@@ -27,7 +27,7 @@ public interface NfeStatusServiceRepository extends JpaRepository<NfeStatusServi
             " where 1=1 " +
             " AND ( :state is null or s.state = : state)" +
             " AND ( :startedFrom is null or n.momentColected BETWEEN :startedFrom AND :startedTo )" +
-            " order by n.momentColected DESC ")
+            " order by n.momentColected , s.state DESC")
     List<NfeStatusService> findByFilter( @Param("state") StateEnum state,
                                          @Param("startedFrom") LocalDateTime startedFrom,
                                          @Param("startedTo") LocalDateTime startedTo);
